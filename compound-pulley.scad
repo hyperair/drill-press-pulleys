@@ -2,6 +2,9 @@ include <MCAD/units/metric.scad>
 use <MCAD/general/facets.scad>
 use <MCAD/shapes/polyhole.scad>
 use <MCAD/shapes/cylinder.scad>
+use <MCAD/array/along_curve.scad>
+use <scad-utils/transformations.scad>
+use <MCAD/fasteners/nuts_and_bolts.scad>
 
 $fs = 0.4;
 $fa = 1;
@@ -21,6 +24,7 @@ function last (v) = v[len (v) - 1];
 
 module compound_pulley (belt_thickness, diameters, bore_d = 0,
     setscrew_positions = [],
+    nut_depth = 0,
     wall_thickness = 1
 )
 {
@@ -29,12 +33,32 @@ module compound_pulley (belt_thickness, diameters, bore_d = 0,
 
     if (len (diameters) > 0)
     {
-        pulley (
-            belt_thickness = belt_thickness,
-            d = diameters[0],
-            wall_thickness = wall_thickness,
-            bore_d = bore_d
-        );
+        difference () {
+            pulley (
+                belt_thickness = belt_thickness,
+                d = diameters[0],
+                wall_thickness = wall_thickness,
+                bore_d = bore_d
+            );
+
+            mcad_multiply (
+                [
+                    for (angle = setscrew_positions)
+                    translation ([0, 0, pulley_height / 2]) *
+                    rotation ([0, 0, angle]) *
+                    rotation ([0, 90, 0])
+                ],
+                keep_original = false
+            )
+            {
+                translate ([0, 0, bore_d / 2 + nut_depth])
+                hull ()
+                mcad_linear_multiply (2, pulley_height, X)
+                mcad_nut_hole (3);
+
+                mcad_polyhole (d = 3.3, h = diameters[0]);
+            }
+        }
 
         translate ([0, 0, pulley_height])
         compound_pulley (
