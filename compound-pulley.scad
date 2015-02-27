@@ -110,5 +110,5 @@ difference () {
     compound_pulley (belt_thickness = 3.2, diameters = [34.5, 17], bore_d = 5);
 
     translate ([0, 0, -epsilon])
-    mcad_rounded_cylinder (d = 9, h = 5, round_r2 = 0.5);
+    mcad_polyhole (d = 9, h = 5, round_r2 = 0.5);
 }
