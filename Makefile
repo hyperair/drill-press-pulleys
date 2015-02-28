@@ -1,4 +1,4 @@
-all: compound-pulley.stl
+all: bearing-plate.stl compound-pulley.stl
 
 clean:
 	rm -f *.stl
