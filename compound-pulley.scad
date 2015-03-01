@@ -25,7 +25,9 @@ function last (v) = v[len (v) - 1];
 module compound_pulley (belt_thickness, diameters, bore_d = 0,
     setscrew_positions = [],
     nut_depth = 0,
-    wall_thickness = 1
+    wall_thickness = 1,
+    belt_profile = "round",      // or "flat"
+    belt_depth = 2,
 )
 {
     pulley_height = belt_thickness + wall_thickness * 2;
@@ -38,7 +40,9 @@ module compound_pulley (belt_thickness, diameters, bore_d = 0,
                 belt_thickness = belt_thickness,
                 d = diameters[0],
                 wall_thickness = wall_thickness,
-                bore_d = bore_d
+                bore_d = bore_d,
+                belt_profile = belt_profile,
+                belt_depth = belt_depth
             );
 
             mcad_multiply (
@@ -64,7 +68,9 @@ module compound_pulley (belt_thickness, diameters, bore_d = 0,
         compound_pulley (
             belt_thickness = belt_thickness,
             diameters = slice (diameters, 1),
-            bore_d = bore_d
+            bore_d = bore_d,
+            belt_profile = belt_profile,
+            belt_depth = belt_depth
         );
 
         if (abs (diameters[0] - last (diameters)) >= fillet_r * 2)
@@ -74,7 +80,14 @@ module compound_pulley (belt_thickness, diameters, bore_d = 0,
     }
 }
 
-module pulley (belt_thickness, d, wall_thickness, bore_d)
+module pulley (
+    belt_thickness,
+    d,
+    wall_thickness,
+    bore_d,
+    belt_profile = "round",
+    belt_depth = undef
+)
 {
     overall_thickness = belt_thickness + wall_thickness * 2;
     pulley_max_d = d + belt_thickness / 2;
@@ -84,8 +97,15 @@ module pulley (belt_thickness, d, wall_thickness, bore_d)
         difference () {
             square ([d / 2, overall_thickness]);
 
-            translate ([d / 2, overall_thickness / 2])
-            circle (d = belt_thickness);
+            if (belt_profile == "round") {
+                translate ([d / 2, overall_thickness / 2])
+                circle (d = belt_thickness);
+            } else {
+                translate ([d / 2, overall_thickness / 2])
+                offset (r = belt_thickness * 0.05)
+                offset (r = belt_thickness * 0.05)
+                square ([belt_depth, belt_thickness], center = true);
+            }
         }
 
         translate ([0, 0, -epsilon])
