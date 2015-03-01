@@ -107,8 +107,18 @@ module cylinder_fillet (fillet_r, base_r)
 }
 
 difference () {
-    compound_pulley (belt_thickness = 3.2, diameters = [34.5, 17], bore_d = 5);
+    compound_pulley (belt_thickness = 3.2, diameters = [34.5, 15], bore_d = 5);
 
+    translate ([0, 0, -epsilon])
+    mcad_polyhole (d = 9, h = 5, round_r2 = 0.5);
+}
+
+translate ([40, 0, 0])
+difference () {
+    compound_pulley (belt_thickness = 3.2, diameters = [34.5, 19], bore_d = 5);
+
+    translate ([0, 0, (3.2 + 1 * 2) * 2])
+    mirror (Z)
     translate ([0, 0, -epsilon])
     mcad_polyhole (d = 9, h = 5, round_r2 = 0.5);
 }
