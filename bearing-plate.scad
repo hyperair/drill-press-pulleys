@@ -11,7 +11,7 @@ rounding_r = 4;
 screw_holes = [[7, 8], [7, 8 + 53]];
 bearing_holes = [[45, 13], [45, 55]];
 spacer_elevation = 7;
-pillar_elevation = 5 + spacer_elevation;
+pillar_elevation = 6 + spacer_elevation;
 
 screw_size = M4;
 clearance = 0.3;
